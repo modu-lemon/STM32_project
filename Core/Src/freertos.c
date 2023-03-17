@@ -712,27 +712,7 @@ void StartTaskGUI(void *argument)
 
 		
 			
-//			if(wea_flag == 1)
-//			{
-//				GUI_SetColor(GUI_DARKRED);
-//				switch(weathernum)
-//				{
-//					case 1:sprintf(buf,"实时天气:晴天");GUI_DispStringAt(buf,1,30);break;
-//					case 2:sprintf(buf,"实时天气:多云");GUI_DispStringAt(buf,1,30);break;
-//					case 3:sprintf(buf,"实时天气:阴天");GUI_DispStringAt(buf,1,30);break;
-//					case 4:sprintf(buf,"实时天气:阵雨");GUI_DispStringAt(buf,1,30);break;
-//					case 5:sprintf(buf,"实时天气:雾霾");GUI_DispStringAt(buf,1,30);break;
-//					default:break;
-//				}
-//				sprintf(buf,"实时温度:%d",temperature);GUI_DispStringAt(buf,1,60);					
-//				WeatherDisplay();
-//			}			
-//			switch(GUI_GetKey())
-//			{
-//				case 'U':keys=0;GUI_ClearRect(0,30,320,180);set_alarm=0;break;
-//				case 'D':keys=0;GUI_ClearRect(0,30,320,180);set_alarm=0;break;
-//				default:break; 
-//			}			
+		
 		}
 
 		
