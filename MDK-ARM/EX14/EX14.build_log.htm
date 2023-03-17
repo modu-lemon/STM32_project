@@ -30,11 +30,15 @@ Build target 'EX14'
 compiling freertos.c...
 ..\Drivers\DS18B20\DS18B20\DS18B20.h(9): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Src/freertos.c: 1 warning, 0 errors
+../Core/Src/freertos.c(1041): warning:  #177-D: variable "mon"  was declared but never referenced
+  	uint16_t mon, year;
+../Core/Src/freertos.c(1041): warning:  #177-D: variable "year"  was declared but never referenced
+  	uint16_t mon, year;
+../Core/Src/freertos.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=99348 RO-data=348668 RW-data=704 ZI-data=63956  
+Program Size: Code=98636 RO-data=348668 RW-data=704 ZI-data=63956  
 FromELF: creating hex file...
-"EX14\EX14.axf" - 0 Error(s), 1 Warning(s).
+"EX14\EX14.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 

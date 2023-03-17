@@ -55,6 +55,12 @@
 #define GUI_CLOCK  0  //时钟显示界面
 #define GUI_SHOW   1  //血氧心率显示界面
 #define GUI_DATA   2  //数据同步界面
+#define UP         1  //按键上键
+#define DOWN       4  //按键下键
+#define LEFT 	   2  //按键左键
+#define RIGHT 	   3  //按键右键
+#define SWITCH	   5  //按键切换键
+#define FUNC 	   6  //按键功能键
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -171,6 +177,7 @@ void EnterSleepMode(void);
 void EnterStopMode(void);
 void WeatherDisplay(void);
 void pause(void);
+void GetWeekDay(void);
 uint8_t CheckIfLeapYear(uint16_t year);
 void ShowWeekByCN(char *buf, uint8_t day);
 void DrawLogo(void);
@@ -318,7 +325,7 @@ void StartTaskKey(void *argument)
   /* Infinite loop */
 	for(;;)
 	{
-		uint16_t mon, year;
+		
 		uint8_t key = keyscan();
 		if (key > 0)
 		{
@@ -343,275 +350,9 @@ void StartTaskKey(void *argument)
 					break;
 			}		  
 		  
-			switch (key)
-			{
-				case 1:
-						if(g_bset)
-						{
-							switch(g_bset)
-							{
-								default:
-									break;
-								case 1:
-									if(RTC_Year<2099) ++RTC_Year;
-									else RTC_Year=2000;
-									if(RTC_Mon==1||RTC_Mon==2)
-									{
-										year=RTC_Year-1;
-										mon=RTC_Mon+12;
-										if (RTC_Mon == 2)
-										{
-											if (CheckIfLeapYear(RTC_Year-1) && RTC_Dat == 29)
-												RTC_Dat = 28;
-										}
-									}
-									else
-									{
-										year=RTC_Year;
-										mon=RTC_Mon;										
-									}
-									day=(RTC_Dat+2*mon+3*(mon+1)/5+year+year/4-year/100+year/400+1)%7;
-									if(day==0)
-									{
-										day=7;
-									}									
-									break;
-								case 2:
-									if(RTC_Mon<12) ++RTC_Mon;
-									else RTC_Mon=1;
-									if(RTC_Mon==1||RTC_Mon==2)
-									{
-										year=RTC_Year-1;
-										mon=RTC_Mon+12;
-										if (RTC_Mon == 2)
-										{
-											if (RTC_Dat == 31 || RTC_Dat == 30 || RTC_Dat == 29)
-											{
-												if (CheckIfLeapYear(RTC_Year)) RTC_Dat = 29;
-												else RTC_Dat = 28;
-											}
-										}
-									}
-									else
-									{
-										if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 11)
-										{
-											if (RTC_Dat == 31)
-											{
-												RTC_Dat = 30;
-											}
-										}										
-										year=RTC_Year;
-										mon=RTC_Mon;										
-									}
-									day=(RTC_Dat+2*mon+3*(mon+1)/5+year+year/4-year/100+year/400+1)%7;
-									if(day==0)
-									{
-										day=7;
-									}									
-									break;
-								case 3:
-									if(RTC_Dat<31) ++RTC_Dat;
-									else RTC_Dat=1;			
-									if(RTC_Mon==1||RTC_Mon==2)
-									{
-										year=RTC_Year-1;
-										mon=RTC_Mon+12;
-										if (RTC_Mon == 2)
-										{
-											if (CheckIfLeapYear(RTC_Year) && RTC_Dat == 30)
-											{
-												RTC_Dat = 1;
-											}
-											if (CheckIfLeapYear(RTC_Year) == 0 && RTC_Dat == 29)
-											{
-												RTC_Dat = 1;
-											}											
-										}
-									}
-									else
-									{
-										year=RTC_Year;
-										mon=RTC_Mon;
-										if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 10)
-										{
-											if (RTC_Dat == 31) RTC_Dat = 1;
-										}
-									}
-									day=(RTC_Dat+2*mon+3*(mon+1)/5+year+year/4-year/100+year/400+1)%7;
-									if(day==0)
-									{
-										day=7;
-									}
-									break;
-								case 4:
-									if(RTC_Hour<23) ++RTC_Hour;
-									else RTC_Hour=0;
-									break;
-								case 5:
-									if(RTC_Min<59) ++RTC_Min;
-									else RTC_Min=0;
-									break;
-								case 6:
-									if(RTC_Sec<59) ++RTC_Sec;
-									else RTC_Sec=0;
-									break;
-							}
-
-						}						
-					break;
-				case 4:
-						if(g_bset)
-						{
-							switch(g_bset)
-							{
-								default:
-									break;
-								case 1:
-									if(RTC_Year>2000) --RTC_Year;
-									else RTC_Year=2099;
-									if(RTC_Mon==1||RTC_Mon==2)
-									{
-										year=RTC_Year-1;
-										mon=RTC_Mon+12;
-										if (RTC_Mon == 2)
-										{
-											if (CheckIfLeapYear(RTC_Year+1) && RTC_Dat == 29)
-												RTC_Dat = 28;
-										}										
-									}
-									else
-									{
-										year=RTC_Year;
-										mon=RTC_Mon;										
-									}
-									day=(RTC_Dat+2*mon+3*(mon+1)/5+year+year/4-year/100+year/400+1)%7;
-									if(day==0)
-									{
-										day=7;
-									}									
-									break;
-								case 2:
-									if(RTC_Mon>1) --RTC_Mon;
-									else RTC_Mon=12;
-									if(RTC_Mon==1||RTC_Mon==2)
-									{
-										year=RTC_Year-1;
-										mon=RTC_Mon+12;
-										if (RTC_Mon == 2 && (RTC_Dat == 31 || RTC_Dat == 30 || RTC_Dat == 29))
-										{
-											if (CheckIfLeapYear(RTC_Year)) RTC_Dat = 29;
-											else RTC_Dat = 28;
-										}										
-									}
-									else
-									{
-										if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 11)
-										{
-											if (RTC_Dat == 31)
-											{
-												RTC_Dat = 30;
-											}
-										}													
-										year=RTC_Year;
-										mon=RTC_Mon;										
-									}
-									day=(RTC_Dat+2*mon+3*(mon+1)/5+year+year/4-year/100+year/400+1)%7;
-									if(day==0)
-									{
-										day=7;
-									}									
-									break;
-								case 3:
-									if(RTC_Dat>1) --RTC_Dat;
-									else RTC_Dat=31;	
-									if(RTC_Mon==1||RTC_Mon==2)
-									{
-										year=RTC_Year-1;
-										mon=RTC_Mon+12;
-										if (RTC_Mon == 2)
-										{
-											if (CheckIfLeapYear(RTC_Year) && RTC_Dat == 31)
-											{
-												RTC_Dat = 29;
-											}
-											if (CheckIfLeapYear(RTC_Year) == 0 && RTC_Dat == 31)
-											{
-												RTC_Dat = 28;
-											}											
-										}									
-									}
-									else
-									{
-										year=RTC_Year;
-										mon=RTC_Mon;
-										if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 10)
-										{
-											if (RTC_Dat == 31) RTC_Dat = 30;
-										}										
-									}
-									day=(RTC_Dat+2*mon+3*(mon+1)/5+year+year/4-year/100+year/400+1)%7;	
-									if(day==0)
-									{
-										day=7;
-									}									
-									break;
-								case 4:
-									if(RTC_Hour>0) --RTC_Hour;
-									else RTC_Hour=23;
-									break;
-								case 5:
-									if(RTC_Min>0) --RTC_Min;
-									else RTC_Min=59;
-									break;
-								case 6:
-									if(RTC_Sec>0) --RTC_Sec;
-									else RTC_Sec=59;
-									break;
-							}
-						}					
-					break;
-				case 2:
-						if(g_bset)
-						{
-							if(g_bset>1) --g_bset;
-							else g_bset=7;
-						}
-						if(set_alarm)
-						{
-						   if(set_alarm>1) --set_alarm;
-							 else set_alarm=3;
-						}
-					break;
-				case 3:
-						if(g_bset)
-						{
-							if(g_bset<7) ++g_bset;
-							else  g_bset=1;
-						}
-						if(set_alarm)
-						{
-						   if(set_alarm<3) ++set_alarm;
-							 else set_alarm=1;
-						}
-					break;
-				case 5:
-						if(g_bset)
-						{
-							SetRTCTime(RTC_Hour,RTC_Min,RTC_Sec);
-							SetRTCDate(RTC_Year,RTC_Mon,RTC_Dat);
-						}
-						g_bset=!g_bset;
-					break;
-				case 6:
-						stop_flag=0;
-						alarm_flag=!alarm_flag;
-						
-					break;
-			}
 		}
-    osDelay(1);
-  }
+		osDelay(1);
+	}
   /* USER CODE END StartTaskKey */
 }
 
@@ -629,6 +370,7 @@ void StartTaskGUI(void *argument)
 	osDelay(100);
 	GUI_Init();
 	ds18b20_init();
+	
 	GUI_DrawBitmap(&bmschoollogo,0,0);
 	osDelay(1000);
 	GUI_Clear();
@@ -667,25 +409,25 @@ void StartTaskGUI(void *argument)
 		GUI_Exec();
 		TouchProcess();
 		
-		switch(gui_idx)
-		{
-			case GUI_CLOCK:
-				//时钟显示界面
-				DrawClock();
-				break;
-			case GUI_SHOW:
-				//血氧心率显示界面
-				DrawShow();
-				break;
-			case GUI_DATA:
-				//数据同步界面
-				DrawData();
-				break;
-			default:
-				//Logo显示
-				DrawLogo();
-				break;
-		}		
+//		switch(gui_idx)
+//		{
+//			case GUI_CLOCK:
+//				//时钟显示界面
+//				DrawClock();
+//				break;
+//			case GUI_SHOW:
+//				//血氧心率显示界面
+//				DrawShow();
+//				break;
+//			case GUI_DATA:
+//				//数据同步界面
+//				DrawData();
+//				break;
+//			default:
+//				//Logo显示
+//				DrawLogo();
+//				break;
+//		}		
 
 		while(gui_idx==2)
 		{
@@ -1254,6 +996,29 @@ void ShowWeekByCN(char *buf, uint8_t day)
 	}
 }
 
+//计算星期几
+void GetWeekDay(void)
+{
+	uint16_t mon, year;
+	if (RTC_Mon == 1|| RTC_Mon == 2)
+	{
+		year = RTC_Year - 1;
+		mon = RTC_Mon + 12;
+	}
+	else
+	{
+		year = RTC_Year;
+		mon = RTC_Mon;									
+	}
+	//吉姆拉尔森公式算星期几
+	day = (RTC_Dat + 2 * mon + 3 * (mon + 1) / 5 + year + year / 4 - year / 100 + year / 400 + 1) % 7;
+	if(day==0)
+	{
+		day=7;
+	}
+	//day:1-7分别对应星期一到星期日
+}
+
 void DrawLogo(void)
 {
 	
@@ -1273,7 +1038,187 @@ void DrawData(void)
 
 void KeyDownClock(uint8_t key)
 {
-	
+	uint16_t mon, year;
+	switch (key)
+	{
+		case UP:	
+			if(g_bset) //在调整时间模式下
+			{
+				switch(g_bset) //判断调整的是年月日时分秒中的哪一个
+				{
+					default:
+						break;
+					case 1:
+						++RTC_Year;
+						//考虑闰年2月29日特殊情况
+						if (RTC_Mon == 2 && CheckIfLeapYear(RTC_Year-1) && RTC_Dat == 29)
+							RTC_Dat = 28;
+						//获取星期几
+						GetWeekDay();
+						break;
+					case 2:
+						if (RTC_Mon < 12) ++RTC_Mon;
+						else RTC_Mon = 1;
+						//考虑1月29、30、31日的特殊情况
+						if (RTC_Mon == 2 && (RTC_Dat == 31 || RTC_Dat == 30 || RTC_Dat == 29))
+						{
+							if (CheckIfLeapYear(RTC_Year)) RTC_Dat = 29;
+							else RTC_Dat = 28;							
+						}
+						//考虑3、5、8、10月31日的特殊情况
+						if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 11)
+						{
+							if (RTC_Dat == 31)
+							{
+								RTC_Dat = 30;
+							}
+						}
+						//获取星期几
+						GetWeekDay();
+						break;
+					case 3:
+						if (RTC_Dat < 31) ++RTC_Dat;
+						else RTC_Dat = 1;
+						//考虑闰年的2月29日以及平年的2月28日的特殊情况
+						if (RTC_Mon == 2)
+						{
+							if (CheckIfLeapYear(RTC_Year) && RTC_Dat == 30)
+							{
+								RTC_Dat = 1;
+							}
+							if (CheckIfLeapYear(RTC_Year) == 0 && RTC_Dat == 29)
+							{
+								RTC_Dat = 1;
+							}								
+						}
+						//考虑4、6、9、10月30日的特殊情况
+						if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 10)
+						{
+							if (RTC_Dat == 31) RTC_Dat = 1;
+						}							
+						//获取星期几
+						GetWeekDay();
+						break;
+					case 4:
+						//调整时
+						if (RTC_Hour < 23) ++RTC_Hour;
+						else RTC_Hour = 0;
+						break;
+					case 5:
+						//调整分
+						if (RTC_Min < 59) ++RTC_Min;
+						else RTC_Min = 0;
+						break;
+					case 6:
+						//调整秒
+						if (RTC_Sec < 59) ++RTC_Sec;
+						else RTC_Sec = 0;
+						break;
+				}
+			}						
+			break;
+		case DOWN:
+			if(g_bset) //在调整时间模式下
+			{
+				switch(g_bset) //判断调整的是年月日时分秒中的哪一个
+				{
+					default:
+						break;
+					case 1:
+						--RTC_Year;
+						//考虑闰年2月29日特殊情况
+						if (RTC_Mon == 2 && CheckIfLeapYear(RTC_Year+1) && RTC_Dat == 29)
+							RTC_Dat = 28;
+						//获取星期几
+						GetWeekDay();															
+						break;
+					case 2:
+						if(RTC_Mon > 1) --RTC_Mon;
+						else RTC_Mon = 12;
+						//考虑3月29、30、31日的特殊情况
+						if (RTC_Mon == 2 && (RTC_Dat == 31 || RTC_Dat == 30 || RTC_Dat == 29))
+						{
+							if (CheckIfLeapYear(RTC_Year)) RTC_Dat = 29;
+							else RTC_Dat = 28;
+						}
+						//考虑5、7、10、12月31日的特殊情况
+						if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 11)
+						{
+							if (RTC_Dat == 31)
+							{
+								RTC_Dat = 30;
+							}
+						}
+						//获取星期几
+						GetWeekDay();							
+						break;
+					case 3:
+						if(RTC_Dat > 1) --RTC_Dat;
+						else RTC_Dat = 31;
+						//考虑闰年的2月29日以及平年的2月28日的特殊情况
+						if (RTC_Mon == 2)
+						{
+							if (CheckIfLeapYear(RTC_Year) && RTC_Dat == 31)
+							{
+								RTC_Dat = 29;
+							}
+							if (CheckIfLeapYear(RTC_Year) == 0 && RTC_Dat == 31)
+							{
+								RTC_Dat = 28;
+							}											
+						}
+						//考虑4、6、9、10月30日的特殊情况
+						if (RTC_Mon == 4 || RTC_Mon == 6 || RTC_Mon == 9 || RTC_Mon == 10)
+						{
+							if (RTC_Dat == 31) RTC_Dat = 30;
+						}							
+						//获取星期几
+						GetWeekDay();								
+						break;
+					case 4:
+						if (RTC_Hour > 0) --RTC_Hour;
+						else RTC_Hour = 23;
+						break;
+					case 5:
+						if (RTC_Min > 0) --RTC_Min;
+						else RTC_Min = 59;
+						break;
+					case 6:
+						if (RTC_Sec > 0) --RTC_Sec;
+						else RTC_Sec = 59;
+						break;
+				}
+			}					
+			break;
+		case LEFT:
+				if (g_bset)
+				{
+					if (g_bset > 1) --g_bset;
+					else g_bset = 7;
+				}
+			break;
+		case RIGHT:
+				if (g_bset)
+				{
+					if (g_bset < 7) ++g_bset;
+					else  g_bset = 1;
+				}
+			break;
+		case SWITCH:
+				if (g_bset)
+				{
+					SetRTCTime(RTC_Hour, RTC_Min, RTC_Sec);
+					SetRTCDate(RTC_Year, RTC_Mon, RTC_Dat);
+				}
+				//时钟正常走模式与调整模式的切换
+				g_bset=!g_bset;
+			break;
+		case FUNC:
+				//打开和关闭闹钟
+				stop_flag=0;
+				alarm_flag=!alarm_flag;
+			break;
+	}	
 }
 void KeyDownShow(uint8_t key)
 {
