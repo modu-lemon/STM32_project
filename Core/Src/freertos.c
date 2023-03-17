@@ -50,13 +50,16 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define WIFI_NAME  "iPhone"
+#define WIFI_PSW   "Aa132132"
+#define GUI_CLOCK  0  //时钟显示界面
+#define GUI_SHOW   1  //血氧心率显示界面
+#define GUI_DATA   2  //数据同步界面
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-#define WIFI_NAME	"iPhone"
-#define WIFI_PSW	"Aa132132"
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -78,7 +81,7 @@ uint8_t wea_flag=0;
 uint8_t tmp_flag=0;
 uint8_t g_bset=0;
 uint8_t g_bsay=0;
-uint8_t keys=0;
+uint8_t gui_idx=0;
 uint8_t alarm_sec=0;
 uint8_t alarm_min=0;
 uint8_t alarm_hour=0;
@@ -170,6 +173,14 @@ void WeatherDisplay(void);
 void pause(void);
 uint8_t CheckIfLeapYear(uint16_t year);
 void ShowWeekByCN(char *buf, uint8_t day);
+void DrawLogo(void);
+void DrawClock(void);
+void DrawShow(void);
+void DrawData(void);
+void KeyDownClock(uint8_t key);
+void KeyDownShow(uint8_t key);
+void KeyDownData(uint8_t key);
+
 void SendATCmd(char *cmd, int waitms)   // 发送AT指令给串口6
 { 
 	if (NULL!=cmd)
@@ -285,12 +296,12 @@ void StartTaskRTC(void *argument)
 {
   /* USER CODE BEGIN StartTaskRTC */
   /* Infinite loop */
-  for(;;)
-  {
+	for(;;)
+	{
 		if(!g_bset)
 		ReadRTCDateTime();			
 		osDelay(500);
-  }
+	}
   /* USER CODE END StartTaskRTC */
 }
 
@@ -305,17 +316,34 @@ void StartTaskKey(void *argument)
 {
   /* USER CODE BEGIN StartTaskKey */
   /* Infinite loop */
-	//uint32_t press_tick=0;
-  for(;;)
-  {
-		uint16_t mon,year;
-		uint8_t key=keyscan();
-		if(key > 0)
+	for(;;)
+	{
+		uint16_t mon, year;
+		uint8_t key = keyscan();
+		if (key > 0)
 		{
-			while(keyscan())
-				osDelay(1);
-			//press_tick=osKernelGetTickCount();
-			switch(key)
+			while (keyscan())
+			osDelay(1);
+			switch(gui_idx)
+			{
+				case GUI_CLOCK:
+					//时钟显示界面
+					KeyDownClock(key);
+					break;
+				case GUI_SHOW:
+					//血氧心率显示界面
+					KeyDownShow(key);
+					break;
+				case GUI_DATA:
+					//数据同步界面
+					KeyDownData(key);
+					break;
+				default:
+					//Logo显示
+					break;
+			}		  
+		  
+			switch (key)
 			{
 				case 1:
 						if(g_bset)
@@ -428,34 +456,11 @@ void StartTaskKey(void *argument)
 									if(RTC_Sec<59) ++RTC_Sec;
 									else RTC_Sec=0;
 									break;
-								/*case 7:
-									if(day<7) day++;
-								else day=1;
-								break;*/
 							}
 
-						}
-//          else if(set_alarm)
-//					{
-//					   switch(set_alarm)
-//						 {
-//						    case 1:
-//									if(alarm_hour<23) ++alarm_hour;
-//									else alarm_hour=0;
-//									break;
-//								case 2:
-//									if(alarm_min<59) ++alarm_min;
-//									else alarm_min=0;
-//									break;
-//								case 3:
-//									if(alarm_sec<59) ++alarm_sec;
-//									else alarm_sec=0;
-//									break;
-//						 }
-//					}						
+						}						
 					break;
 				case 4:
-						//beep(4);
 						if(g_bset)
 						{
 							switch(g_bset)
@@ -563,30 +568,8 @@ void StartTaskKey(void *argument)
 									if(RTC_Sec>0) --RTC_Sec;
 									else RTC_Sec=59;
 									break;
-								/*case 7:
-									if(day>0) day--;
-								else day=7;
-								break;*/
 							}
-						}
-//						else if(set_alarm)
-//					{
-//					   switch(set_alarm)
-//						 {
-//						    case 1:
-//									if(alarm_hour>0) --alarm_hour;
-//									else alarm_hour=23;
-//									break;
-//								case 2:
-//									if(alarm_min>0) --alarm_min;
-//									else alarm_min=59;
-//									break;
-//								case 3:
-//									if(alarm_sec>0) --alarm_sec;
-//									else alarm_sec=59;
-//									break;
-//						 }
-//					}						
+						}					
 					break;
 				case 2:
 						if(g_bset)
@@ -655,22 +638,11 @@ void StartTaskGUI(void *argument)
 	GUI_SetFont(&GUI_FontHZ_KaiTi_24AA4);
 	GUI_SetBkColor(GUI_GREEN);
 	GUI_Clear();
-//	GUI_DrawBitmap(&bmbk1,0,132);
-//	GUI_DrawBitmap(&bmbk1,220,132);
+
 	GUI_SetColor(GUI_RED);
-	//GUI_SetBkColor(GUI_WHITE);
 	GUI_DispStringHCenterAt("电子设计综合实践\n血氧心率测试仪\n陈泽森 20041411\n丁羿然 20071213",sw/2,sh/2-50);
-  osDelay(2000);
+	osDelay(2000);
 	GUI_Clear();
-//	GUI_DrawBitmap(&bmbk1,0,0);
-//	GUI_DrawBitmap(&bmbk1,220,0);		
-//	GUI_DrawBitmap(&bmbk1,0,132);
-//	GUI_DrawBitmap(&bmbk1,220,132);	
-//	GUI_DispStringHCenterAt("陈泽森\n20041411",sw/2,sh/2-40);
-//	osDelay(2000);
-//	GUI_SetBkColor(GUI_CYAN);
-//	GUI_Clear();
-	
 	
 	GUI_SetColor(GUI_BLUE);
 	GUI_DispStringHCenterAt("时钟模式",sw/2,0);
@@ -685,38 +657,44 @@ void StartTaskGUI(void *argument)
 	BUTTON_SetText(btnDown,"weather");
 	
 	GUI_SetBkColor(GUI_WHITE);
-//	GUI_SetColor(GUI_BLUE);
-	//GUI_DrawBitmap(&bmbackground1,0,0);
-	//GUI_DrawBitmap(&bmqingtian,200,50);   //天气图片位置  96*96
+
 	times=0;
 	float real_temp = 0;
 	float last_temp = 0;
 	char buf[50];
-  for(;;)
-  {
-		
+	for(;;)
+	{
 		GUI_Exec();
-		TouchProcess();	
-//		sprintf(str,"当前角度:%4.1f°",fAX);
-//		GUI_DispStringAt(str, 10 ,60);
-		/*switch(GUI_GetKey())
+		TouchProcess();
+		
+		switch(gui_idx)
 		{
-			case 'U':keys=1;GUI_ClearRect(0,0,320,180);set_alarm=1;break;
-			case 'D':keys=2;GUI_ClearRect(0,30,320,180);break;
-			default:break; 
-		}*/
-		while(keys==2)
+			case GUI_CLOCK:
+				//时钟显示界面
+				DrawClock();
+				break;
+			case GUI_SHOW:
+				//血氧心率显示界面
+				DrawShow();
+				break;
+			case GUI_DATA:
+				//数据同步界面
+				DrawData();
+				break;
+			default:
+				//Logo显示
+				DrawLogo();
+				break;
+		}		
+
+		while(gui_idx==2)
 		{
 			GUI_Exec();
 			TouchProcess();	
-
-		
-			
-		
 		}
 
 		
-		while(keys==0)   //正常模式
+		while(gui_idx==0)   //正常模式
 		{
 			real_temp = ds18b20_read();
 			GUI_Exec();
@@ -726,10 +704,6 @@ void StartTaskGUI(void *argument)
 			GUI_DispStringHCenterAt("时钟模式",sw/2,0);			
 
 			
-			/*if(wea_flag == 1)
-			{
-				WeatherDisplay();
-			}*/
 
 			if(alarm_hour==RTC_Hour&&alarm_sec==RTC_Sec&&alarm_min==RTC_Min)
 			{		  
@@ -739,17 +713,11 @@ void StartTaskGUI(void *argument)
 			{			
 						
 				beep_flag=1;
-/*				
-				osDelay(100);
-				GUI_SetBkColor(GUI_CYAN);
-				GUI_DrawBitmap(&bmnaoling,220,60);
-				osDelay(200);
-				GUI_ClearRect(220,60,270,110);*/
+
 			}
 			switch(g_bset)
 			{
 				default:					
-//					GUI_SetBkColor(GUI_CYAN);
 					GUI_SetBkColor(GUI_GREEN);				
 					sprintf(buf,"%4d年%2d月%2d日  星期",RTC_Year,RTC_Mon,RTC_Dat);
 					ShowWeekByCN(buf, day);
@@ -783,10 +751,6 @@ void StartTaskGUI(void *argument)
 						
 					}
 					
-//					if(alarm_flag)
-//						GUI_DispStringAt("闹钟开启",1,140);
-//					else
-//						GUI_DispStringAt("闹钟关闭",1,140);
 					break;
 				case 1:				
 					if(osKernelGetTickCount() % 1000 > 800)
@@ -878,8 +842,8 @@ void StartTaskGUI(void *argument)
 			}
 			switch(GUI_GetKey())
 			{
-				case 'U':keys=1;set_alarm=1;times=0;stop_flag=0;break;
-				case 'D': keys=2;
+				case 'U':gui_idx=1;set_alarm=1;times=0;stop_flag=0;break;
+				case 'D': gui_idx=2;
 									GUI_SetBkColor(GUI_CYAN);
 									GUI_ClearRect(0,0,320,30);
 									GUI_SetBkColor(GUI_BROWN);
@@ -1288,6 +1252,36 @@ void ShowWeekByCN(char *buf, uint8_t day)
 		default:
 			break;	
 	}
+}
+
+void DrawLogo(void)
+{
+	
+}
+void DrawClock(void)
+{
+	
+}
+void DrawShow(void)
+{
+	
+}
+void DrawData(void)
+{
+	
+}
+
+void KeyDownClock(uint8_t key)
+{
+	
+}
+void KeyDownShow(uint8_t key)
+{
+	
+}
+void KeyDownData(uint8_t key)
+{
+	
 }
 
 /* USER CODE END Application */
