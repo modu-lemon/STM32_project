@@ -1,9 +1,9 @@
 ex14\kaiti_24.o: ..\Core\Src\KaiTi_24.c
-ex14\kaiti_24.o: ..\Middlewares\STemWin\inc\GUI.H
+ex14\kaiti_24.o: ../Middlewares/STemWin/inc/GUI.H
 ex14\kaiti_24.o: D:\keil5mdk\ARM\ARMCC\Bin\..\include\stddef.h
-ex14\kaiti_24.o: ..\Middlewares\STemWin\inc\GUI_ConfDefaults.h
-ex14\kaiti_24.o: ..\Middlewares\STemWin\Config\GUIConf.h
-ex14\kaiti_24.o: ..\Middlewares\STemWin\inc\GUI_Type.h
-ex14\kaiti_24.o: ..\Middlewares\STemWin\inc\LCD.h
-ex14\kaiti_24.o: ..\Middlewares\STemWin\inc\Global.h
-ex14\kaiti_24.o: ..\Middlewares\STemWin\inc\GUI_Version.h
+ex14\kaiti_24.o: ../Middlewares/STemWin/inc/GUI_ConfDefaults.h
+ex14\kaiti_24.o: ../Middlewares/STemWin/Config/GUIConf.h
+ex14\kaiti_24.o: ../Middlewares/STemWin/inc/GUI_Type.h
+ex14\kaiti_24.o: ../Middlewares/STemWin/inc/LCD.h
+ex14\kaiti_24.o: ../Middlewares/STemWin/inc/Global.h
+ex14\kaiti_24.o: ../Middlewares/STemWin/inc/GUI_Version.h

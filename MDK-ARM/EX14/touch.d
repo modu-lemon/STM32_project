@@ -39,10 +39,10 @@ ex14\touch.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 ex14\touch.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 ex14\touch.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 ex14\touch.o: ../Core/Inc/spi.h
-ex14\touch.o: ..\Middlewares\STemWin\inc\GUI.h
-ex14\touch.o: ..\Middlewares\STemWin\inc\GUI_ConfDefaults.h
-ex14\touch.o: ..\Middlewares\STemWin\Config\GUIConf.h
-ex14\touch.o: ..\Middlewares\STemWin\inc\GUI_Type.h
-ex14\touch.o: ..\Middlewares\STemWin\inc\LCD.h
-ex14\touch.o: ..\Middlewares\STemWin\inc\Global.h
-ex14\touch.o: ..\Middlewares\STemWin\inc\GUI_Version.h
+ex14\touch.o: ../Middlewares/STemWin/inc/GUI.h
+ex14\touch.o: ../Middlewares/STemWin/inc/GUI_ConfDefaults.h
+ex14\touch.o: ../Middlewares/STemWin/Config/GUIConf.h
+ex14\touch.o: ../Middlewares/STemWin/inc/GUI_Type.h
+ex14\touch.o: ../Middlewares/STemWin/inc/LCD.h
+ex14\touch.o: ../Middlewares/STemWin/inc/Global.h
+ex14\touch.o: ../Middlewares/STemWin/inc/GUI_Version.h
